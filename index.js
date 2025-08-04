@@ -1,0 +1,28 @@
+const express = require('express');
+const dotenv = require('dotenv');
+const morgan = require('morgan');
+const path = require('path');
+
+
+//importing necessary modules
+const connectDB = require('./src/config/db.js');
+
+dotenv.config();
+
+const app = express();
+const PORT = process.env.PORT || 3000;
+
+
+// Middleware
+app.use(express.json());
+app.use(morgan("dev"));
+
+
+//Routes
+app.get('/', (req, res) => res.send("Welcome to Softpire!"));
+
+//start the server
+app.listen(PORT, () => {
+    connectDB();
+  console.log(`Server is running on port ${PORT}`);
+});
