@@ -1,16 +1,5 @@
-const nodemailer = require('nodemailer');
+const transporter = require('../config/email');
 const emailTemplates = require('../../templates/emailTemplates');
-
-// Create transporter
-const transporter = nodemailer.createTransport({
-  host: process.env.EMAIL_HOST,
-  port: process.env.EMAIL_PORT,
-  secure: process.env.EMAIL_SECURE === 'true',
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS
-  }
-});
 
 // Send password reset email
 const sendPasswordResetEmail = async (email, resetToken) => {
