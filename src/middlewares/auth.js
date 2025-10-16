@@ -1,5 +1,18 @@
 const jwt = require('jsonwebtoken');
 const User = require('../models/user.schema');
+const Founder = require('../models/founder.schema');
+const Recruiter = require('../models/recruiter.schema');
+const SoloEntrepreneur = require('../models/soloEntrepreneur.schema');
+
+// Helper: find user across all collections
+const findUserById = async (userId) => {
+  return (
+    (await User.findById(userId)) ||
+    (await Founder.findById(userId)) ||
+    (await Recruiter.findById(userId)) ||
+    (await SoloEntrepreneur.findById(userId))
+  );
+};
 
 const authenticate = async (req, res, next) => {
   try {
@@ -13,7 +26,7 @@ const authenticate = async (req, res, next) => {
     }
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET || 'default_secret');
-    const user = await User.findById(decoded.userId);
+    const user = await findUserById(decoded.userId);
 
     if (!user) {
       return res.status(401).json({

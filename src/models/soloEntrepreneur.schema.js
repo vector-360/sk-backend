@@ -47,6 +47,19 @@ const soloEntrepreneurSchema = new mongoose.Schema({
     type: Boolean,
     required: true
   },
+  resetPasswordToken: {
+    type: String
+  },
+  resetPasswordExpires: {
+    type: Date
+  },
+  isEmailVerified: {
+    type: Boolean,
+    default: false
+  },
+  emailVerificationToken: {
+    type: String
+  },
   createdAt: {
     type: Date,
     default: Date.now
