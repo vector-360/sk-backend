@@ -21,8 +21,10 @@ app.use(morgan("dev"));
 //Routes
 const userRoutes = require('./src/routes/user.routes');
 const founderRoutes = require('./src/routes/founder.routes');
+const recruiterRoutes = require('./src/routes/recruiter.routes');
 app.use('/api/users', userRoutes);
 app.use('/api/founders', founderRoutes);
+app.use('/api/recruiters', recruiterRoutes);
 
 app.get('/', (req, res) => res.send("Welcome to Softpire!"));
 
