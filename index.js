@@ -19,6 +19,9 @@ app.use(morgan("dev"));
 
 
 //Routes
+const userRoutes = require('./src/routes/user.routes');
+app.use('/api/users', userRoutes);
+
 app.get('/', (req, res) => res.send("Welcome to Softpire!"));
 
 //start the server
