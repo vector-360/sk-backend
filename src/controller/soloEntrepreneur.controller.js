@@ -91,6 +91,33 @@ const soloEntrepreneurSignup = async (req, res) => {
   }
 };
 
+const getSoloEntrepreneurProfile = async (req, res) => {
+  try {
+    res.status(200).json({
+      success: true,
+      data: {
+        user: {
+          id: req.user._id,
+          firstName: req.user.firstName,
+          lastName: req.user.lastName,
+          email: req.user.email,
+          country: req.user.country,
+          state: req.user.state,
+          phoneNumber: req.user.phoneNumber,
+          role: req.user.role
+        }
+      }
+    });
+  } catch (error) {
+    console.error('Error fetching solo entrepreneur profile:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Internal server error.'
+    });
+  }
+};
+
 module.exports = {
-  soloEntrepreneurSignup
+  soloEntrepreneurSignup,
+  getSoloEntrepreneurProfile
 };

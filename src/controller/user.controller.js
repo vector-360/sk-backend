@@ -69,6 +69,29 @@ const guestSignin = async (req, res) => {
   }
 };
 
+const getGuestProfile = async (req, res) => {
+  try {
+    res.status(200).json({
+      success: true,
+      data: {
+        user: {
+          id: req.user._id,
+          fullName: req.user.fullName,
+          email: req.user.email,
+          isGuest: req.user.isGuest
+        }
+      }
+    });
+  } catch (error) {
+    console.error('Error fetching guest profile:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Internal server error.'
+    });
+  }
+};
+
 module.exports = {
-  guestSignin
+  guestSignin,
+  getGuestProfile
 };
