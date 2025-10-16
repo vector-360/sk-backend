@@ -1,6 +1,8 @@
 const SoloEntrepreneur = require('../models/soloEntrepreneur.schema');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
+const crypto = require('crypto');
+const { sendVerificationEmail } = require('../utils/sendEmail');
 
 const soloEntrepreneurSignup = async (req, res) => {
   try {
@@ -43,6 +45,10 @@ const soloEntrepreneurSignup = async (req, res) => {
     // Hash the password
     const hashedPassword = await bcrypt.hash(password, 10);
 
+    // Generate email verification token
+    const verificationToken = crypto.randomBytes(32).toString('hex');
+    const verificationTokenHash = crypto.createHash('sha256').update(verificationToken).digest('hex');
+
     // Create new solo entrepreneur
     const newSoloEntrepreneur = new SoloEntrepreneur({
       firstName,
@@ -53,21 +59,23 @@ const soloEntrepreneurSignup = async (req, res) => {
       phoneNumber,
       password: hashedPassword,
       role,
-      termsAgreed
+      termsAgreed,
+      emailVerificationToken: verificationTokenHash
     });
 
     await newSoloEntrepreneur.save();
 
-    // Generate JWT token
-    const token = jwt.sign(
-      { userId: newSoloEntrepreneur._id, isGuest: false },
-      process.env.JWT_SECRET || 'default_secret',
-      { expiresIn: '7d' } // Token expires in 7 days
-    );
+    // Send verification email
+    try {
+      await sendVerificationEmail(newSoloEntrepreneur.email, verificationToken);
+    } catch (emailError) {
+      console.error('Failed to send verification email:', emailError);
+      // Continue with signup even if email fails, but log the error
+    }
 
     res.status(201).json({
       success: true,
-      message: 'Solo Entrepreneur account created successfully.',
+      message: 'Solo Entrepreneur account created successfully. Please check your email to verify your account.',
       data: {
         user: {
           id: newSoloEntrepreneur._id,
@@ -78,8 +86,7 @@ const soloEntrepreneurSignup = async (req, res) => {
           state: newSoloEntrepreneur.state,
           phoneNumber: newSoloEntrepreneur.phoneNumber,
           role: newSoloEntrepreneur.role
-        },
-        token
+        }
       }
     });
   } catch (error) {

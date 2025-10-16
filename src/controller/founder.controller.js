@@ -1,6 +1,8 @@
 const Founder = require('../models/founder.schema');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
+const crypto = require('crypto');
+const { sendVerificationEmail } = require('../utils/sendEmail');
 
 const founderSignup = async (req, res) => {
   try {
@@ -43,6 +45,10 @@ const founderSignup = async (req, res) => {
     // Hash the password
     const hashedPassword = await bcrypt.hash(password, 10);
 
+    // Generate email verification token
+    const verificationToken = crypto.randomBytes(32).toString('hex');
+    const verificationTokenHash = crypto.createHash('sha256').update(verificationToken).digest('hex');
+
     // Create new founder
     const newFounder = new Founder({
       firstName,
@@ -53,21 +59,23 @@ const founderSignup = async (req, res) => {
       phoneNumber,
       password: hashedPassword,
       role,
-      termsAgreed
+      termsAgreed,
+      emailVerificationToken: verificationTokenHash
     });
 
     await newFounder.save();
 
-    // Generate JWT token
-    const token = jwt.sign(
-      { userId: newFounder._id, isGuest: false },
-      process.env.JWT_SECRET || 'default_secret',
-      { expiresIn: '7d' } // Token expires in 7 days
-    );
+    // Send verification email
+    try {
+      await sendVerificationEmail(newFounder.email, verificationToken);
+    } catch (emailError) {
+      console.error('Failed to send verification email:', emailError);
+      // Continue with signup even if email fails, but log the error
+    }
 
     res.status(201).json({
       success: true,
-      message: 'Founder account created successfully.',
+      message: 'Founder account created successfully. Please check your email to verify your account.',
       data: {
         user: {
           id: newFounder._id,
@@ -78,8 +86,7 @@ const founderSignup = async (req, res) => {
           state: newFounder.state,
           phoneNumber: newFounder.phoneNumber,
           role: newFounder.role
-        },
-        token
+        }
       }
     });
   } catch (error) {

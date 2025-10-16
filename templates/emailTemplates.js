@@ -19,9 +19,11 @@ const passwordResetSuccessEmail = () => `
 
 const emailVerificationEmail = (verificationUrl) => `
   <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-    <h2>Verify Your Email</h2>
-    <p>Welcome! Please verify your email address to complete your registration.</p>
-    <a href="${verificationUrl}" style="background-color: #28a745; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block;">Verify Email</a>
+    <h1>Softpire</h1>
+    <h2>Verify Your Email Address</h2>
+    <p>We've sent a verification link to your email address.</p>
+    <p>Please click the link to confirm your account.</p>
+    <a href="${verificationUrl}" style="background-color: #007bff; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block;">Verify</a>
     <p>If the button doesn't work, copy and paste this link into your browser: ${verificationUrl}</p>
   </div>
 `;

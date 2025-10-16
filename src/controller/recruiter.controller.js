@@ -1,6 +1,8 @@
 const Recruiter = require('../models/recruiter.schema');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
+const crypto = require('crypto');
+const { sendVerificationEmail } = require('../utils/sendEmail');
 
 const recruiterSignup = async (req, res) => {
   try {
@@ -43,6 +45,10 @@ const recruiterSignup = async (req, res) => {
     // Hash the password
     const hashedPassword = await bcrypt.hash(password, 10);
 
+    // Generate email verification token
+    const verificationToken = crypto.randomBytes(32).toString('hex');
+    const verificationTokenHash = crypto.createHash('sha256').update(verificationToken).digest('hex');
+
     // Create new recruiter
     const newRecruiter = new Recruiter({
       firstName,
@@ -53,21 +59,23 @@ const recruiterSignup = async (req, res) => {
       phoneNumber,
       password: hashedPassword,
       role,
-      termsAgreed
+      termsAgreed,
+      emailVerificationToken: verificationTokenHash
     });
 
     await newRecruiter.save();
 
-    // Generate JWT token
-    const token = jwt.sign(
-      { userId: newRecruiter._id, isGuest: false },
-      process.env.JWT_SECRET || 'default_secret',
-      { expiresIn: '7d' } // Token expires in 7 days
-    );
+    // Send verification email
+    try {
+      await sendVerificationEmail(newRecruiter.email, verificationToken);
+    } catch (emailError) {
+      console.error('Failed to send verification email:', emailError);
+      // Continue with signup even if email fails, but log the error
+    }
 
     res.status(201).json({
       success: true,
-      message: 'Recruiter account created successfully.',
+      message: 'Recruiter account created successfully. Please check your email to verify your account.',
       data: {
         user: {
           id: newRecruiter._id,
@@ -78,8 +86,7 @@ const recruiterSignup = async (req, res) => {
           state: newRecruiter.state,
           phoneNumber: newRecruiter.phoneNumber,
           role: newRecruiter.role
-        },
-        token
+        }
       }
     });
   } catch (error) {
