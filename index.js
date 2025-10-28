@@ -28,7 +28,7 @@ app.use('/api/users', userRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/founders', founderRoutes);
 app.use('/api/recruiters', recruiterRoutes);
-app.use('/api/solo-entrepreneurs', soloEntrepreneurRoutes);
+app.use('/api/solo-entrepruitersreneurs', soloEntrepreneurRoutes);
 
 app.get('/', (req, res) => res.send("Welcome to Softpire!"));
 

@@ -20,6 +20,14 @@ const findUserByEmail = async (email) => {
   );
 };
 
+// Helper: find user by email and specific role
+const findUserByEmailAndRole = async (email, role) => {
+  if (role === 'founder') return await Founder.findOne({ email });
+  if (role === 'recruiter') return await Recruiter.findOne({ email });
+  if (role === 'soloEntrepreneur') return await SoloEntrepreneur.findOne({ email });
+  return null;
+};
+
 const findUserByToken = async (resetTokenHash) => {
   const query = {
     resetPasswordToken: resetTokenHash,
@@ -36,20 +44,27 @@ const findUserByToken = async (resetTokenHash) => {
 // Login function
 const login = async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const { email, password, role } = req.body;
 
-    if (!email || !password) {
+    if (!email || !password || !role) {
       return res.status(400).json({
         success: false,
-        message: 'Email and password are required.'
+        message: 'Email, password, and role are required.'
       });
     }
 
-    const user = await findUserByEmail(email);
+    if (!['founder', 'recruiter', 'soloEntrepreneur'].includes(role)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid role specified.'
+      });
+    }
+
+    const user = await findUserByEmailAndRole(email, role);
     if (!user) {
       return res.status(401).json({
         success: false,
-        message: 'Invalid email or password.'
+        message: 'Invalid email, password, or role.'
       });
     }
 
