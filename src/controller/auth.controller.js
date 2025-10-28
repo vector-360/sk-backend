@@ -281,9 +281,69 @@ const verifyEmail = async (req, res) => {
   }
 };
 
+// Resend verification email function
+const resendVerificationEmail = async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    if (!email) {
+      return res.status(400).json({
+        success: false,
+        message: 'Email is required.'
+      });
+    }
+
+    const user = await findUserByEmail(email);
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'User not found.'
+      });
+    }
+
+    if (user.isEmailVerified) {
+      return res.status(400).json({
+        success: false,
+        message: 'Email is already verified.'
+      });
+    }
+
+    // Generate verification token
+    const verificationToken = crypto.randomBytes(32).toString('hex');
+    const verificationTokenHash = crypto.createHash('sha256').update(verificationToken).digest('hex');
+
+    // Set token
+    user.emailVerificationToken = verificationTokenHash;
+    await user.save();
+
+    // Send verification email
+    try {
+      await sendVerificationEmail(user.email, verificationToken);
+    } catch (emailError) {
+      console.error('Failed to send verification email:', emailError);
+      return res.status(500).json({
+        success: false,
+        message: 'Failed to send verification email.'
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: 'Verification email resent successfully.'
+    });
+  } catch (error) {
+    console.error('Error in resend verification email:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Internal server error.'
+    });
+  }
+};
+
 module.exports = {
   login,
   forgotPassword,
   resetPassword,
-  verifyEmail
+  verifyEmail,
+  resendVerificationEmail
 };
