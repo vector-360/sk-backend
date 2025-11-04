@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { founderSignup, getFounderProfile } = require('../controller/founder.controller');
+const { founderSignup, getFounderProfile, updateProfilePage1, updateProfilePage2, updateProfilePage3, updateProfilePage4, updateProfilePage5, updateProfilePage6 } = require('../controller/founder.controller');
 const { isAuthenticated, isFounder } = require('../middlewares/isAuthenticated');
 
 // Founder signup route
@@ -8,5 +8,11 @@ router.post('/signup', founderSignup);
 
 // Protected founder routes
 router.get('/profile', isAuthenticated, isFounder, getFounderProfile);
+router.put('/update-profile/page1', isAuthenticated, isFounder, updateProfilePage1);
+router.put('/update-profile/page2', isAuthenticated, isFounder, updateProfilePage2);
+router.put('/update-profile/page3', isAuthenticated, isFounder, updateProfilePage3);
+router.put('/update-profile/page4', isAuthenticated, isFounder, updateProfilePage4);
+router.put('/update-profile/page5', isAuthenticated, isFounder, updateProfilePage5);
+router.put('/update-profile/page6', isAuthenticated, isFounder, updateProfilePage6);
 
 module.exports = router;
