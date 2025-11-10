@@ -1,9 +1,9 @@
-const cloiudinary = require('cloudinary').v2;
+const cloudinary = require('cloudinary').v2;
 const { CloudinaryStorage } = require('multer-storage-cloudinary');
 const multer = require('multer');
 
 // Configure Cloudinary
-cloiudinary.config({
+cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
   api_key: process.env.CLOUDINARY_API_KEY,
   api_secret: process.env.CLOUDINARY_API_SECRET,
@@ -11,25 +11,25 @@ cloiudinary.config({
 
 // Configure Cloudinary Storage for Multer
 const storage = new CloudinaryStorage({
-  cloudinary: cloiudinary,
+  cloudinary: cloudinary,
     params: {
     folder: 'softpire_uploads',
     allowed_formats: ['jpg', 'png', 'jpeg', 'pdf', 'docx'],
     transformation: [
-        { 
+        {
             width: 500,
         height: 500,
         crop: 'fill',
         gravity: 'face', // Focus on face if detected
-        qualitu: 'auto:good',
+        quality: 'auto:good',
         format: 'jpg'
         }
     ],
     public_id: (req, file) => {
         //Generate unique filename with user ID and timestamp
-        const userId = req.user?.id || 'anonymous';
+        const userId = req.user?._id || 'anonymous';
         const timestamp = Date.now();
-        return 'profile_${userId}_${timestamp}';
+        return `profile_${userId}_${timestamp}`;
     }
     },
 });
@@ -54,7 +54,7 @@ const upload = multer({
 // Function to delete image from Cloudinary
 const deleteImage = async (publicId) => {
     try {
-        const result = await cloiudinary.uploader.destroy(publicId);
+        const result = await cloudinary.uploader.destroy(publicId);
         return result;
     } catch (error) {
         console.error('Error deleting image from Cloudinary:', error);
@@ -72,7 +72,7 @@ const extractPublicId = (url) => {
 };
 
 module.exports = {
-    cloiudinary,
+    cloudinary,
     upload,
     deleteImage,
     extractPublicId,
