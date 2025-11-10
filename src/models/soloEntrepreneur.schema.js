@@ -60,6 +60,20 @@ const soloEntrepreneurSchema = new mongoose.Schema({
   emailVerificationToken: {
     type: String
   },
+  profilePicture: {
+    url: {
+      type: String,
+      default: null
+    },
+    publicId: {
+      type: String,
+      default: null
+    },
+    uploadedAt: {
+      type: Date,
+      default: null
+    }
+  },
   createdAt: {
     type: Date,
     default: Date.now
