@@ -140,9 +140,19 @@ const founderSchema = new mongoose.Schema({
   emailVerificationToken: {
     type: String
   },
-  createdAt: {
-    type: Date,
-    default: Date.now
+  profilePicture: {
+    url: {
+      type: String,
+      default: null
+    },
+    publicId: {
+      type: String,
+      default: null
+    },
+    uploadedAt: {
+      type: Date,
+      default: null
+    }
   },
   updatedAt: {
     type: Date,

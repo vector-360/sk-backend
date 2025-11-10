@@ -60,6 +60,20 @@ const recruiterSchema = new mongoose.Schema({
   emailVerificationToken: {
     type: String
   },
+  profilePicture: {
+    url: {
+      type: String,
+      default: null
+    },
+    publicId: {
+      type: String,
+      default: null
+    },
+    uploadedAt: {
+      type: Date,
+      default: null
+    }
+  },
   createdAt: {
     type: Date,
     default: Date.now
@@ -69,5 +83,6 @@ const recruiterSchema = new mongoose.Schema({
     default: Date.now
   }
 });
+
 
 module.exports = mongoose.model('Recruiter', recruiterSchema);
