@@ -39,9 +39,20 @@ const loginAlertEmail = (loginDetails) => `
   </div>
 `;
 
+const emailVerificationSuccessEmail = () => `
+  <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+    <h1>Softpire</h1>
+    <h2>Email Verification Successful</h2>
+    <p>Congratulations! Your email address has been successfully verified.</p>
+    <p>You can now log in to your account and start using our services.</p>
+    <p>If you have any questions, feel free to contact our support team.</p>
+  </div>
+`;
+
 module.exports = {
   passwordResetEmail,
   passwordResetSuccessEmail,
   emailVerificationEmail,
-  loginAlertEmail
+  loginAlertEmail,
+  emailVerificationSuccessEmail
 };

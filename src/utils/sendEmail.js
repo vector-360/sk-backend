@@ -59,9 +59,24 @@ const sendLoginAlertEmail = async (email, loginDetails) => {
   await transporter.sendMail(mailOptions);
 };
 
+// Send email verification success email
+const sendVerificationSuccessEmail = async (email) => {
+  const html = emailTemplates.emailVerificationSuccessEmail();
+
+  const mailOptions = {
+    from: process.env.EMAIL_FROM,
+    to: email,
+    subject: 'Email Verification Successful',
+    html
+  };
+
+  await transporter.sendMail(mailOptions);
+};
+
 module.exports = {
   sendPasswordResetEmail,
   sendPasswordResetSuccessEmail,
   sendVerificationEmail,
-  sendLoginAlertEmail
+  sendLoginAlertEmail,
+  sendVerificationSuccessEmail
 };

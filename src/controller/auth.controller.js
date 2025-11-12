@@ -5,7 +5,7 @@ const axios = require("axios");
 const Founder = require("../models/founder.schema.js");
 const Recruiter = require("../models/recruiter.schema.js");
 const SoloEntrepreneur = require("../models/soloEntrepreneur.schema.js");
-const { sendPasswordResetEmail, sendPasswordResetSuccessEmail, sendVerificationEmail, sendLoginAlertEmail } = require("../utils/sendEmail.js");
+const { sendPasswordResetEmail, sendPasswordResetSuccessEmail, sendVerificationEmail, sendLoginAlertEmail, sendVerificationSuccessEmail } = require("../utils/sendEmail.js");
 const { sendOtpSms } = require("../utils/sendSms.js");
 const { generateOtp } = require("./services.js");
 const emailTemplates = require("../../templates/emailTemplates.js");
@@ -391,6 +391,14 @@ const verifyEmail = async (req, res) => {
     user.isEmailVerified = true;
     user.emailVerificationToken = undefined;
     await user.save();
+
+    // Send verification success email
+    try {
+      await sendVerificationSuccessEmail(user.email);
+    } catch (emailError) {
+      console.error('Failed to send verification success email:', emailError);
+      // Continue with response even if email fails, but log the error
+    }
 
     res.status(200).json({
       success: true,
