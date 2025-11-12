@@ -1,11 +1,9 @@
 const express = require('express');
 const router = express.Router();
-const { soloEntrepreneurSignup, getSoloEntrepreneurProfile, uploadProfilePicture, deleteProfilePicture } = require('../controller/soloEntrepreneur.controller');
+const { getSoloEntrepreneurProfile, uploadProfilePicture, deleteProfilePicture } = require('../controller/soloEntrepreneur.controller');
 const { isAuthenticated, isSoloEntrepreneur } = require('../middlewares/isAuthenticated');
 const { upload } = require('../config/cloudinary');
-
-// Solo Entrepreneur signup route
-router.post('/signup', soloEntrepreneurSignup);
+;
 
 // Protected solo entrepreneur routes
 router.get('/profile', isAuthenticated, isSoloEntrepreneur, getSoloEntrepreneurProfile);

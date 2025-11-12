@@ -1,11 +1,9 @@
 const express = require('express');
 const router = express.Router();
-const { founderSignup, getFounderProfile, updateProfilePage1, updateProfilePage2, updateProfilePage3, updateProfilePage4, updateProfilePage5, updateProfilePage6, uploadProfilePicture, deleteProfilePicture } = require('../controller/founder.controller');
+const { getFounderProfile, updateProfilePage1, updateProfilePage2, updateProfilePage3, updateProfilePage4, updateProfilePage5, updateProfilePage6, uploadProfilePicture, deleteProfilePicture } = require('../controller/founder.controller');
 const { isAuthenticated, isFounder } = require('../middlewares/isAuthenticated');
 const { upload } = require('../config/cloudinary');
 
-// Founder signup route
-router.post('/signup', founderSignup);
 
 // Protected founder routes
 router.get('/profile', isAuthenticated, isFounder, getFounderProfile);

@@ -20,6 +20,130 @@ const findUserByEmail = async (email) => {
   );
 };
 
+// Unified signup function for Founder, Recruiter, and Solo Entrepreneur
+const signup = async (req, res) => {
+  try {
+    const { firstName, lastName, email, country, state, phoneNumber, password, role, termsAgreed } = req.body;
+
+    // Validate required fields
+    if (!firstName || !lastName || !email || !country || !state || !phoneNumber || !password || !role || termsAgreed === undefined) {
+      return res.status(400).json({
+        success: false,
+        message: 'All fields are required.'
+      });
+    }
+
+    // Check if terms are agreed
+    if (!termsAgreed) {
+      return res.status(400).json({
+        success: false,
+        message: 'You must agree to the terms and conditions.'
+      });
+    }
+
+    // Validate role
+    const validRoles = ['Founder', 'Recruiter', 'Solo Entrepreneur'];
+    if (!validRoles.includes(role)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid role selected.'
+      });
+    }
+
+    // Check if email already exists across all user types
+    const existingUser = await findUserByEmail(email);
+    if (existingUser) {
+      return res.status(400).json({
+        success: false,
+        message: 'Email already exists. Please use a different email or log in.'
+      });
+    }
+
+    // Hash the password
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Generate email verification token
+    const verificationToken = crypto.randomBytes(32).toString('hex');
+    const verificationTokenHash = crypto.createHash('sha256').update(verificationToken).digest('hex');
+
+    // Create new user based on role
+    let newUser;
+    if (role === 'Founder') {
+      newUser = new Founder({
+        firstName,
+        lastName,
+        email,
+        country,
+        state,
+        phoneNumber,
+        password: hashedPassword,
+        role,
+        termsAgreed,
+        emailVerificationToken: verificationTokenHash
+      });
+    } else if (role === 'Recruiter') {
+      newUser = new Recruiter({
+        firstName,
+        lastName,
+        email,
+        country,
+        state,
+        phoneNumber,
+        password: hashedPassword,
+        role,
+        termsAgreed,
+        emailVerificationToken: verificationTokenHash
+      });
+    } else if (role === 'Solo Entrepreneur') {
+      newUser = new SoloEntrepreneur({
+        firstName,
+        lastName,
+        email,
+        country,
+        state,
+        phoneNumber,
+        password: hashedPassword,
+        role,
+        termsAgreed,
+        emailVerificationToken: verificationTokenHash
+      });
+    }
+
+    await newUser.save();
+
+    // Send verification email
+    try {
+      await sendVerificationEmail(newUser.email, verificationToken);
+    } catch (emailError) {
+      console.error('Failed to send verification email:', emailError);
+      // Continue with signup even if email fails, but log the error
+    }
+
+    res.status(201).json({
+      success: true,
+      message: `${role} account created successfully. Please check your email to verify your account.`,
+      data: {
+        user: {
+          id: newUser._id,
+          firstName: newUser.firstName,
+          lastName: newUser.lastName,
+          email: newUser.email,
+          country: newUser.country,
+          state: newUser.state,
+          phoneNumber: newUser.phoneNumber,
+          role: newUser.role
+        }
+      }
+    });
+  } catch (error) {
+    console.error('Error in unified signup:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Internal server error.'
+    });
+  }
+};
+
 // Helper: find user by email and specific role
 const findUserByEmailAndRole = async (email, role) => {
   if (role === 'founder') return await Founder.findOne({ email });
@@ -341,6 +465,7 @@ const resendVerificationEmail = async (req, res) => {
 };
 
 module.exports = {
+  signup,
   login,
   forgotPassword,
   resetPassword,

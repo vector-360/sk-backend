@@ -5,100 +5,6 @@ const crypto = require('crypto');
 const { sendVerificationEmail } = require('../utils/sendEmail');
 const { deleteImage, extractPublicId } = require('../config/cloudinary');
 
-const soloEntrepreneurSignup = async (req, res) => {
-  try {
-    const { firstName, lastName, email, country, state, phoneNumber, password, role, termsAgreed } = req.body;
-
-    // Validate required fields
-    if (!firstName || !lastName || !email || !country || !state || !phoneNumber || !password || !role || termsAgreed === undefined) {
-      return res.status(400).json({
-        success: false,
-        message: 'All fields are required.'
-      });
-    }
-
-    // Check if terms are agreed
-    if (!termsAgreed) {
-      return res.status(400).json({
-        success: false,
-        message: 'You must agree to the terms and conditions.'
-      });
-    }
-
-    // Validate role
-    const validRoles = ['Founder', 'Recruiter', 'Solo Entrepreneur'];
-    if (!validRoles.includes(role)) {
-      return res.status(400).json({
-        success: false,
-        message: 'Invalid role selected.'
-      });
-    }
-
-    // Check if email already exists
-    const existingSoloEntrepreneur = await SoloEntrepreneur.findOne({ email });
-    if (existingSoloEntrepreneur) {
-      return res.status(400).json({
-        success: false,
-        message: 'Email already exists. Please use a different email or log in.'
-      });
-    }
-
-    // Hash the password
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    // Generate email verification token
-    const verificationToken = crypto.randomBytes(32).toString('hex');
-    const verificationTokenHash = crypto.createHash('sha256').update(verificationToken).digest('hex');
-
-    // Create new solo entrepreneur
-    const newSoloEntrepreneur = new SoloEntrepreneur({
-      firstName,
-      lastName,
-      email,
-      country,
-      state,
-      phoneNumber,
-      password: hashedPassword,
-      role,
-      termsAgreed,
-      emailVerificationToken: verificationTokenHash
-    });
-
-    await newSoloEntrepreneur.save();
-
-    // Send verification email
-    try {
-      await sendVerificationEmail(newSoloEntrepreneur.email, verificationToken);
-    } catch (emailError) {
-      console.error('Failed to send verification email:', emailError);
-      // Continue with signup even if email fails, but log the error
-    }
-
-    res.status(201).json({
-      success: true,
-      message: 'Solo Entrepreneur account created successfully. Please check your email to verify your account.',
-      data: {
-        user: {
-          id: newSoloEntrepreneur._id,
-          firstName: newSoloEntrepreneur.firstName,
-          lastName: newSoloEntrepreneur.lastName,
-          email: newSoloEntrepreneur.email,
-          country: newSoloEntrepreneur.country,
-          state: newSoloEntrepreneur.state,
-          phoneNumber: newSoloEntrepreneur.phoneNumber,
-          role: newSoloEntrepreneur.role
-        }
-      }
-    });
-  } catch (error) {
-    console.error('Error in solo entrepreneur signup:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Internal server error.'
-    });
-  }
-};
-
 const getSoloEntrepreneurProfile = async (req, res) => {
   try {
     res.status(200).json({
@@ -215,7 +121,6 @@ const deleteProfilePicture = async (req, res) => {
 };
 
 module.exports = {
-  soloEntrepreneurSignup,
   getSoloEntrepreneurProfile,
   uploadProfilePicture,
   deleteProfilePicture,
