@@ -14,7 +14,8 @@ const findUserById = async (userId) => {
   );
 };
 
-const authenticate = async (req, res, next) => {
+// Middleware to authenticate all user types
+const isAuthenticated = async (req, res, next) => {
   try {
     const token = req.header('Authorization')?.replace('Bearer ', '');
 
@@ -45,20 +46,56 @@ const authenticate = async (req, res, next) => {
   }
 };
 
-const guestAccess = (req, res, next) => {
-  // Allow access for both full users and guests
-  if (req.user && (req.user.isGuest || !req.user.isGuest)) {
+// Middleware to check if user is Founder
+const isFounder = (req, res, next) => {
+  if (req.user && req.user.role === 'Founder') {
     next();
   } else {
     res.status(403).json({
       success: false,
-      message: 'Access denied. Guest or authenticated user required.'
+      message: 'Access denied. Founder role required.'
     });
   }
 };
 
-const fullUserOnly = (req, res, next) => {
-  // Restrict access to full users only (not guests)
+// Middleware to check if user is Recruiter
+const isRecruiter = (req, res, next) => {
+  if (req.user && req.user.role === 'Recruiter') {
+    next();
+  } else {
+    res.status(403).json({
+      success: false,
+      message: 'Access denied. Recruiter role required.'
+    });
+  }
+};
+
+// Middleware to check if user is Solo Entrepreneur
+const isSoloEntrepreneur = (req, res, next) => {
+  if (req.user && req.user.role === 'Solo Entrepreneur') {
+    next();
+  } else {
+    res.status(403).json({
+      success: false,
+      message: 'Access denied. Solo Entrepreneur role required.'
+    });
+  }
+};
+
+// Middleware to check if user is Guest
+const isGuest = (req, res, next) => {
+  if (req.user && req.user.isGuest) {
+    next();
+  } else {
+    res.status(403).json({
+      success: false,
+      message: 'Access denied. Guest user required.'
+    });
+  }
+};
+
+// Middleware to check if user is Full User (not guest)
+const isFullUser = (req, res, next) => {
   if (req.user && !req.user.isGuest) {
     next();
   } else {
@@ -70,7 +107,10 @@ const fullUserOnly = (req, res, next) => {
 };
 
 module.exports = {
-  authenticate,
-  guestAccess,
-  fullUserOnly
+  isAuthenticated,
+  isFounder,
+  isRecruiter,
+  isSoloEntrepreneur,
+  isGuest,
+  isFullUser
 };

@@ -1,0 +1,82 @@
+const transporter = require('../config/email');
+const emailTemplates = require('../../templates/emailTemplates');
+
+// Send password reset email
+const sendPasswordResetEmail = async (email, resetToken) => {
+  const resetUrl = `${process.env.FRONTEND_URL}/reset-password/${resetToken}`;
+  const html = emailTemplates.passwordResetEmail(resetUrl);
+
+  const mailOptions = {
+    from: process.env.EMAIL_FROM,
+    to: email,
+    subject: 'Password Reset Request',
+    html
+  };
+
+  await transporter.sendMail(mailOptions);
+};
+
+// Send password reset success email
+const sendPasswordResetSuccessEmail = async (email) => {
+  const html = emailTemplates.passwordResetSuccessEmail();
+
+  const mailOptions = {
+    from: process.env.EMAIL_FROM,
+    to: email,
+    subject: 'Password Reset Successful',
+    html
+  };
+
+  await transporter.sendMail(mailOptions);
+};
+
+// Send email verification email
+const sendVerificationEmail = async (email, verificationToken) => {
+  const verificationUrl = `${process.env.FRONTEND_URL}/verify-email/${verificationToken}`;
+  const html = emailTemplates.emailVerificationEmail(verificationUrl);
+
+  const mailOptions = {
+    from: process.env.EMAIL_FROM,
+    to: email,
+    subject: 'Verify Your Email',
+    html
+  };
+
+  await transporter.sendMail(mailOptions);
+};
+
+// Send login alert email
+const sendLoginAlertEmail = async (email, loginDetails) => {
+  const html = emailTemplates.loginAlertEmail(loginDetails);
+
+  const mailOptions = {
+    from: process.env.EMAIL_FROM,
+    to: email,
+    subject: 'New Login Detected',
+    html
+  };
+
+  await transporter.sendMail(mailOptions);
+};
+
+// Send email verification success email
+const sendVerificationSuccessEmail = async (email) => {
+  const html = emailTemplates.emailVerificationSuccessEmail();
+
+  const mailOptions = {
+    from: process.env.EMAIL_FROM,
+    to: email,
+    subject: 'Email Verification Successful',
+    html
+  };
+
+  await transporter.sendMail(mailOptions);
+};
+
+module.exports = {
+  sendPasswordResetEmail,
+  sendPasswordResetSuccessEmail,
+  sendVerificationEmail,
+  sendLoginAlertEmail,
+  sendVerificationSuccessEmail
+};
