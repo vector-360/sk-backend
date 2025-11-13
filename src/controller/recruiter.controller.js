@@ -461,6 +461,101 @@ personalized dashboard.`
   }
 };
 
+const uploadProfilePicture = async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({
+        success: false,
+        message: 'No file uploaded.'
+      });
+    }
+
+    // Update the recruiter's profile picture
+    const updatedRecruiter = await Recruiter.findByIdAndUpdate(
+      req.user._id,
+      {
+        profilePicture: {
+          url: req.file.path,
+          publicId: req.file.filename,
+          uploadedAt: new Date()
+        },
+        updatedAt: Date.now()
+      },
+      { new: true, runValidators: true }
+    );
+
+    if (!updatedRecruiter) {
+      return res.status(404).json({
+        success: false,
+        message: 'Recruiter not found.'
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: 'Profile picture uploaded successfully.',
+      data: {
+        profilePicture: updatedRecruiter.profilePicture
+      }
+    });
+  } catch (error) {
+    console.error('Error uploading profile picture:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Internal server error.'
+    });
+  }
+};
+
+const deleteProfilePicture = async (req, res) => {
+  try {
+    const recruiter = await Recruiter.findById(req.user._id);
+
+    if (!recruiter) {
+      return res.status(404).json({
+        success: false,
+        message: 'Recruiter not found.'
+      });
+    }
+
+    if (!recruiter.profilePicture || !recruiter.profilePicture.publicId) {
+      return res.status(400).json({
+        success: false,
+        message: 'No profile picture to delete.'
+      });
+    }
+
+    // Delete from Cloudinary
+    const { deleteImage } = require('../config/cloudinary');
+    await deleteImage(recruiter.profilePicture.publicId);
+
+    // Update the recruiter's profile picture to null
+    const updatedRecruiter = await Recruiter.findByIdAndUpdate(
+      req.user._id,
+      {
+        profilePicture: {
+          url: null,
+          publicId: null,
+          uploadedAt: null
+        },
+        updatedAt: Date.now()
+      },
+      { new: true, runValidators: true }
+    );
+
+    res.status(200).json({
+      success: true,
+      message: 'Profile picture deleted successfully.'
+    });
+  } catch (error) {
+    console.error('Error deleting profile picture:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Internal server error.'
+    });
+  }
+};
+
 module.exports = {
   recruiterSignup,
   getRecruiterProfile,
@@ -469,5 +564,7 @@ module.exports = {
   updateProfilePage3,
   updateProfilePage4,
   updateProfilePage5,
-  updateProfilePage6
+  updateProfilePage6,
+  uploadProfilePicture,
+  deleteProfilePicture
 };
