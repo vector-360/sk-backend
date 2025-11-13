@@ -165,30 +165,23 @@ const findUserByToken = async (resetTokenHash) => {
   );
 };
 
-// Login function
+// Unified login function across all collections
 const login = async (req, res) => {
   try {
-    const { email, password, role } = req.body;
+    const { email, password } = req.body;
 
-    if (!email || !password || !role) {
+    if (!email || !password) {
       return res.status(400).json({
         success: false,
-        message: 'Email, password, and role are required.'
+        message: 'Email and password are required.'
       });
     }
 
-    if (!['founder', 'recruiter', 'soloEntrepreneur'].includes(role)) {
-      return res.status(400).json({
-        success: false,
-        message: 'Invalid role specified.'
-      });
-    }
-
-    const user = await findUserByEmailAndRole(email, role);
+    const user = await findUserByEmail(email);
     if (!user) {
       return res.status(401).json({
         success: false,
-        message: 'Invalid email, password, or role.'
+        message: 'Invalid email or password.'
       });
     }
 
@@ -240,7 +233,7 @@ const login = async (req, res) => {
       }
     });
   } catch (error) {
-    console.error('Error in login:', error);
+    console.error('Error in unified login:', error);
     res.status(500).json({
       success: false,
       message: 'Internal server error.'
