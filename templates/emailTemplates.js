@@ -175,10 +175,78 @@ const emailVerificationSuccessEmail = () => `
 </html>
 `;
 
+const googleWelcomeEmail = (name) => `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+  <title>Welcome to Softpire - Google Sign Up</title>
+</head>
+<body style="font-family: 'Roboto', Arial, sans-serif; background-color: #f4f4f4; margin: 0; padding: 0;">
+  <div style="max-width: 600px; margin: 20px auto; background-color: #ffffff; border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); overflow: hidden;">
+    <div style="background: linear-gradient(135deg, #4285f4, #34a853); color: white; padding: 30px; text-align: center;">
+      <h1 style="margin: 0; font-size: 28px; font-weight: 700;">Softpire</h1>
+      <p style="margin: 10px 0 0; font-size: 16px;">Welcome Aboard</p>
+    </div>
+    <div style="padding: 30px;">
+      <h2 style="color: #333; font-size: 24px; margin-bottom: 20px;">Welcome to Softpire, ${name}!</h2>
+      <p style="color: #666; line-height: 1.6; margin-bottom: 20px;">Thank you for signing up with Softpire using your Google account! Your account has been successfully created and verified.</p>
+      <p style="color: #666; line-height: 1.6; margin-bottom: 20px;">You can now access all our features and start your journey towards innovation and entrepreneurship.</p>
+      <div style="text-align: center; margin: 30px 0;">
+        <a href="https://softpire.com/dashboard" style="background: linear-gradient(135deg, #4285f4, #34a853); color: white; padding: 15px 30px; text-decoration: none; border-radius: 8px; font-weight: 500; display: inline-block; box-shadow: 0 4px 6px rgba(66,133,244,0.3);">Get Started</a>
+      </div>
+      <p style="color: #666; line-height: 1.6;">If you have any questions or need assistance, feel free to contact our support team at <a href="mailto:support@softpire.com" style="color: #4285f4;">support@softpire.com</a>.</p>
+    </div>
+    <div style="background-color: #f8f9fa; padding: 20px; text-align: center; border-top: 1px solid #e9ecef;">
+      <p style="margin: 0; color: #666; font-size: 14px;">Best regards,<br>The Softpire Team</p>
+      <p style="margin: 10px 0 0; color: #999; font-size: 12px;">© 2025 Softpire. All rights reserved.</p>
+    </div>
+  </div>
+</body>
+</html>
+`;
+
+const passwordSetConfirmationEmail = (name) => `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+  <title>Password Set Successfully - Softpire</title>
+</head>
+<body style="font-family: 'Roboto', Arial, sans-serif; background-color: #f4f4f4; margin: 0; padding: 0;">
+  <div style="max-width: 600px; margin: 20px auto; background-color: #ffffff; border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); overflow: hidden;">
+    <div style="background: linear-gradient(135deg, #28a745, #1e7e34); color: white; padding: 30px; text-align: center;">
+      <h1 style="margin: 0; font-size: 28px; font-weight: 700;">Softpire</h1>
+      <p style="margin: 10px 0 0; font-size: 16px;">Password Set Successfully</p>
+    </div>
+    <div style="padding: 30px;">
+      <h2 style="color: #333; font-size: 24px; margin-bottom: 20px;">Password Set Successfully, ${name}!</h2>
+      <p style="color: #666; line-height: 1.6; margin-bottom: 20px;">Your password has been successfully set for your Google account on Softpire.</p>
+      <p style="color: #666; line-height: 1.6; margin-bottom: 20px;">You can now log in using either your Google account or your email and password combination.</p>
+      <div style="text-align: center; margin: 30px 0;">
+        <a href="https://softpire.com/login" style="background: linear-gradient(135deg, #28a745, #1e7e34); color: white; padding: 15px 30px; text-decoration: none; border-radius: 8px; font-weight: 500; display: inline-block; box-shadow: 0 4px 6px rgba(40,167,69,0.3);">Log In Now</a>
+      </div>
+      <p style="color: #666; line-height: 1.6;">For any assistance, reach out to us at <a href="mailto:support@softpire.com" style="color: #28a745;">support@softpire.com</a>.</p>
+    </div>
+    <div style="background-color: #f8f9fa; padding: 20px; text-align: center; border-top: 1px solid #e9ecef;">
+      <p style="margin: 0; color: #666; font-size: 14px;">Best regards,<br>The Softpire Team</p>
+      <p style="margin: 10px 0 0; color: #999; font-size: 12px;">© 2025 Softpire. All rights reserved.</p>
+    </div>
+  </div>
+</body>
+</html>
+`;
+
 module.exports = {
   passwordResetEmail,
   passwordResetSuccessEmail,
   emailVerificationEmail,
   loginAlertEmail,
-  emailVerificationSuccessEmail
+  emailVerificationSuccessEmail,
+  googleWelcomeEmail,
+  passwordSetConfirmationEmail
 };
