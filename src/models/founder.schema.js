@@ -35,7 +35,9 @@ const founderSchema = new mongoose.Schema({
   },
   password: {
     type: String,
-    required: true,
+    required: function() {
+      return this.provider !== 'google';
+    },
     minlength: 6
   },
   role: {
@@ -135,9 +137,24 @@ const founderSchema = new mongoose.Schema({
   },
   isEmailVerified: {
     type: Boolean,
-    default: false
+    default: function() {
+      return this.provider === 'google';
+    }
   },
   emailVerificationToken: {
+    type: String
+  },
+  googleId: {
+    type: String,
+    unique: true,
+    sparse: true
+  },
+  provider: {
+    type: String,
+    enum: ['local', 'google'],
+    default: 'local'
+  },
+  avatar: {
     type: String
   },
   profilePicture: {
