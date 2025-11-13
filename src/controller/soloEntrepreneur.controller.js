@@ -220,7 +220,7 @@ const addCollaborationGoals = async (req, res) => {
 
 const addPreference = async (req, res) => {
 	try {
-		const { preferredIndustries, availability, preferredCommunicationStyle, } = req.body;
+		const { preferredIndustries, availability, preferredCommunicationStyle } = req.body;
 
 		// validation
 		if (!preferredIndustries || !availability || !preferredCommunicationStyle) {
@@ -236,9 +236,9 @@ const addPreference = async (req, res) => {
 			{
 				$set: {
 					preference: {
-            preferredIndustries,
-            availability,
-            preferredCommunicationStyle
+						preferredIndustries,
+						availability,
+						preferredCommunicationStyle,
 					},
 					updatedAt: Date.now(),
 				},
@@ -267,7 +267,6 @@ const addPreference = async (req, res) => {
 	}
 };
 
-
 const addBackground = async (req, res) => {
 	try {
 		const { education, experience, achievements, portfolio } = req.body;
@@ -286,10 +285,10 @@ const addBackground = async (req, res) => {
 			{
 				$set: {
 					background: {
-            education,
-            experience,
-            achievements,
-            portfolio,
+						education,
+						experience,
+						achievements,
+						portfolio,
 					},
 					updatedAt: Date.now(),
 				},
@@ -319,41 +318,41 @@ const addBackground = async (req, res) => {
 };
 
 const addPersonality = async (req, res) => {
-  try {
-    const { bio, interest, facts } = req.body;
+	try {
+		const { bio, interest, facts } = req.body;
 
-    // validation
-    if (!bio || !interest || !facts) {
-      return res.status(400).json({
-        success: false,
-        message: "Please fill in all required  personality.",
-      });
-    }
+		// validation
+		if (!bio || !interest ) {
+			return res.status(400).json({
+				success: false,
+				message: "Please fill in all required  personality.",
+			});
+		}
 
-    // Update the users personality
-    const updatedUser = await SoloEntrepreneur.findByIdAndUpdate(
-      req.user._id,
-      {
-        $set: {
-          personality: {
-            bio,
-            interest,
-            facts,
-          },
-          updatedAt: Date.now(),
-        },
-      },
-      { new: true, runValidators: true } // to return updated document
-    );
+		// Update the users personality
+		const updatedUser = await SoloEntrepreneur.findByIdAndUpdate(
+			req.user._id,
+			{
+				$set: {
+					personality: {
+						bio,
+						interest,
+						facts,
+					},
+					updatedAt: Date.now(),
+				},
+			},
+			{ new: true, runValidators: true } // to return updated document
+		);
 
-    if (!updatedUser) {
-      return res.status(404).json({
-        success: false,
-        message: "User not found",
-      });
-    }
+		if (!updatedUser) {
+			return res.status(404).json({
+				success: false,
+				message: "User not found",
+			});
+		}
 
-    res.status(200).json({
+		res.status(200).json({
 			success: true,
 			message: "personality updated successfully",
 			data: { personality: updatedUser.personality },
@@ -367,8 +366,6 @@ const addPersonality = async (req, res) => {
 	}
 };
 
-
-
 module.exports = {
 	getSoloEntrepreneurProfile,
 	uploadProfilePicture,
@@ -377,7 +374,7 @@ module.exports = {
 	extractPublicId,
 	addProfessionalDetails,
 	addCollaborationGoals,
-  addBackground,
-  addPreference,
-  addPersonality
+	addBackground,
+	addPreference,
+	addPersonality,
 };

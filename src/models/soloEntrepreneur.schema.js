@@ -158,17 +158,17 @@ const soloEntrepreneurSchema = new mongoose.Schema({
 	},
 	personality: {
 		bio: {
-      type: String,
-      default: null
-    },
-    interest: {
-      type: String,
-      default: null
-    },
-    fact: {
-      type: String,
-      default: null
-    }
+			type: String,
+			default: null,
+		},
+		interest: {
+			type: String,
+			default: null,
+		},
+		fact: {
+			type: String,
+			default: null,
+		},
 	},
 	createdAt: {
 		type: Date,
